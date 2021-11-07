@@ -1,0 +1,298 @@
+loading s25-d69.avi number of clips: 846 
+time: 19.26 search...0.8%
+loading s32-d27.avi number of clips: 1334 
+time: 76.93 search...1.6%
+loading s34-d28.avi number of clips: 695 
+time: 10.78 search...2.4%
+loading s25-d35.avi number of clips: 223 
+time: 0.92 search...3.1%
+loading s30-d53.avi number of clips: 789 
+time: 15.91 search...3.9%
+loading s25-d52.avi number of clips: 329 
+time: 1.97 search...4.7%
+loading s24-d34.avi number of clips: 315 
+time: 1.48 search...5.5%
+loading s22-d43.avi number of clips: 188 
+time: 0.63 search...6.3%
+loading s21-d50.avi number of clips: 87 
+time: 0.19 search...7.1%
+loading s21-d43.avi number of clips: 232 
+time: 0.80 search...7.9%
+loading s30-d41.avi number of clips: 1133 
+time: 52.44 search...8.7%
+loading s37-d29.avi number of clips: 171 
+time: 0.53 search...9.4%
+loading s22-d35.avi number of clips: 144 
+time: 0.41 search...10.2%
+loading s14-d51.avi number of clips: 487 
+time: 5.02 search...11.0%
+loading s14-d43.avi number of clips: 269 
+time: 1.15 search...11.8%
+loading s13-d31.avi number of clips: 294 
+time: 1.28 search...12.6%
+loading s17-d53.avi number of clips: 410 
+time: 2.97 search...13.4%
+loading s21-d28.avi number of clips: 211 
+time: 0.73 search...14.2%
+loading s21-d42.avi number of clips: 354 
+time: 2.30 search...15.0%
+loading s23-d51.avi number of clips: 398 
+time: 2.71 search...15.7%
+loading s27-d54.avi number of clips: 645 
+time: 10.42 search...16.5%
+loading s32-d69.avi number of clips: 731 
+time: 14.07 search...17.3%
+loading s13-d48.avi number of clips: 183 
+time: 0.55 search...18.1%
+loading s30-d43.avi number of clips: 1172 
+time: 53.40 search...18.9%
+loading s28-d39.avi number of clips: 1357 
+time: 76.08 search...19.7%
+loading s27-d21.avi number of clips: 254 
+time: 0.96 search...20.5%
+loading s14-d26.avi number of clips: 735 
+time: 15.02 search...21.3%
+loading s34-d34.avi number of clips: 1044 
+time: 30.23 search...22.0%
+loading s29-d42.avi number of clips: 1314 
+time: 75.63 search...22.8%
+loading s36-d70.avi number of clips: 412 
+time: 2.91 search...23.6%
+loading s26-d23.avi number of clips: 160 
+time: 0.47 search...24.4%
+loading s24-d48.avi number of clips: 133 
+time: 0.35 search...25.2%
+loading s21-d21.avi number of clips: 256 
+time: 1.06 search...26.0%
+loading s14-d27.avi number of clips: 357 
+time: 2.05 search...26.8%
+loading s13-d45.avi number of clips: 251 
+time: 1.02 search...27.6%
+loading s28-d51.avi number of clips: 1166 
+time: 48.60 search...28.3%
+loading s29-d39.avi number of clips: 565 
+time: 6.34 search...29.1%
+loading s14-d35.avi number of clips: 135 
+time: 0.37 search...29.9%
+loading s24-d40.avi number of clips: 367 
+time: 2.28 search...30.7%
+loading s23-d21.avi number of clips: 281 
+time: 1.31 search...31.5%
+loading s13-d52.avi number of clips: 156 
+time: 0.45 search...32.3%
+loading s23-d46.avi number of clips: 636 
+time: 10.45 search...33.1%
+loading s23-d54.avi number of clips: 555 
+time: 6.08 search...33.9%
+loading s23-d42.avi number of clips: 731 
+time: 14.62 search...34.6%
+loading s36-d31.avi number of clips: 412 
+time: 2.97 search...35.4%
+loading s33-d27.avi number of clips: 1183 
+time: 61.14 search...36.2%
+loading s37-d25.avi number of clips: 77 
+time: 0.19 search...37.0%
+loading s14-d46.avi number of clips: 542 
+time: 5.78 search...37.8%
+loading s32-d55.avi number of clips: 330 
+time: 1.72 search...38.6%
+loading s23-d31.avi number of clips: 183 
+time: 0.57 search...39.4%
+loading s26-d70.avi number of clips: 339 
+time: 1.92 search...40.2%
+loading s17-d42.avi number of clips: 920 
+time: 25.83 search...40.9%
+loading s35-d40.avi number of clips: 817 
+time: 18.04 search...41.7%
+loading s31-d31.avi number of clips: 364 
+time: 1.98 search...42.5%
+loading s21-d40.avi number of clips: 184 
+time: 0.55 search...43.3%
+loading s28-d27.avi number of clips: 1018 
+time: 33.89 search...44.1%
+loading s36-d27.avi number of clips: 253 
+time: 0.96 search...44.9%
+loading s22-d48.avi number of clips: 138 
+time: 0.35 search...45.7%
+loading s35-d48.avi number of clips: 445 
+time: 3.39 search...46.5%
+loading s30-d40.avi number of clips: 284 
+time: 1.18 search...47.2%
+loading s24-d41.avi number of clips: 1049 
+time: 30.20 search...48.0%
+loading s35-d41.avi number of clips: 1619 
+time: 114.42 search...48.8%
+loading s26-d26.avi number of clips: 2449 
+time: 417.54 search...49.6%
+loading s36-d50.avi number of clips: 302 
+time: 1.42 search...50.4%
+loading s27-d70.avi number of clips: 481 
+time: 4.42 search...51.2%
+loading s27-d45.avi number of clips: 275 
+time: 1.24 search...52.0%
+loading s37-d39.avi number of clips: 537 
+time: 5.45 search...52.8%
+loading s31-d25.avi number of clips: 148 
+time: 0.40 search...53.5%
+loading s36-d23.avi number of clips: 1148 
+time: 39.65 search...54.3%
+loading s27-d29.avi number of clips: 469 
+time: 3.77 search...55.1%
+loading s29-d50.avi number of clips: 160 
+time: 0.48 search...55.9%
+loading s37-d21.avi number of clips: 655 
+time: 9.87 search...56.7%
+loading s36-d42.avi number of clips: 1072 
+time: 36.80 search...57.5%
+loading s17-d48.avi number of clips: 126 
+time: 0.35 search...58.3%
+loading s22-d26.avi number of clips: 549 
+time: 6.81 search...59.1%
+loading s15-d26.avi number of clips: 1974 
+time: 231.02 search...59.8%
+loading s31-d28.avi number of clips: 339 
+time: 1.76 search...60.6%
+loading s23-d34.avi number of clips: 303 
+time: 1.61 search...61.4%
+loading s32-d70.avi number of clips: 430 
+time: 3.37 search...62.2%
+loading s34-d69.avi number of clips: 762 
+time: 14.52 search...63.0%
+loading s37-d46.avi number of clips: 806 
+time: 19.76 search...63.8%
+loading s24-d23.avi number of clips: 333 
+time: 1.89 search...64.6%
+loading s33-d45.avi number of clips: 449 
+time: 3.58 search...65.4%
+loading s22-d53.avi number of clips: 349 
+time: 2.13 search...66.1%
+loading s27-d50.avi number of clips: 136 
+time: 0.35 search...66.9%
+loading s22-d29.avi number of clips: 184 
+time: 0.57 search...67.7%
+loading s25-d23.avi number of clips: 218 
+time: 0.72 search...68.5%
+loading s13-d21.avi number of clips: 167 
+time: 0.49 search...69.3%
+loading s13-d28.avi number of clips: 327 
+time: 1.94 search...70.1%
+loading s24-d28.avi number of clips: 422 
+time: 2.95 search...70.9%
+loading s22-d34.avi number of clips: 134 
+time: 0.35 search...71.7%
+loading s13-d40.avi number of clips: 190 
+time: 0.58 search...72.4%
+loading s13-d25.avi number of clips: 166 
+time: 0.48 search...73.2%
+loading s33-d50.avi number of clips: 197 
+time: 0.63 search...74.0%
+loading s15-d70.avi number of clips: 487 
+time: 4.70 search...74.8%
+loading s22-d25.avi number of clips: 87 
+time: 0.20 search...75.6%
+loading s33-d54.avi number of clips: 640 
+time: 9.03 search...76.4%
+loading s27-d34.avi number of clips: 96 
+time: 0.23 search...77.2%
+loading s22-d46.avi number of clips: 876 
+time: 18.61 search...78.0%
+loading s21-d53.avi number of clips: 270 
+time: 1.10 search...78.7%
+loading s30-d29.avi number of clips: 355 
+time: 2.17 search...79.5%
+loading s15-d35.avi number of clips: 376 
+time: 2.32 search...80.3%
+loading s26-d69.avi number of clips: 1241 
+time: 55.60 search...81.1%
+loading s28-d25.avi number of clips: 183 
+time: 0.61 search...81.9%
+loading s23-d39.avi number of clips: 315 
+time: 1.62 search...82.7%
+loading s17-d69.avi number of clips: 734 
+time: 14.41 search...83.5%
+loading s29-d52.avi number of clips: 341 
+time: 2.10 search...84.3%
+loading s28-d46.avi number of clips: 656 
+time: 9.44 search...85.0%
+loading s21-d39.avi number of clips: 215 
+time: 0.69 search...85.8%
+loading s32-d52.avi number of clips: 319 
+time: 1.71 search...86.6%
+loading s25-d51.avi number of clips: 194 
+time: 0.62 search...87.4%
+loading s22-d55.avi number of clips: 82 
+time: 0.20 search...88.2%
+loading s17-d55.avi number of clips: 130 
+time: 0.34 search...89.0%
+loading s21-d55.avi number of clips: 118 
+time: 0.30 search...89.8%
+loading s35-d55.avi number of clips: 394 
+time: 2.96 search...90.6%
+loading s21-d23.avi number of clips: 196 
+time: 0.67 search...91.3%
+loading s23-d45.avi number of clips: 241 
+time: 1.03 search...92.1%
+loading s24-d53.avi number of clips: 303 
+time: 1.59 search...92.9%
+loading s34-d41.avi number of clips: 910 
+time: 23.85 search...93.7%
+loading s21-d45.avi number of clips: 162 
+time: 0.50 search...94.5%
+loading s36-d43.avi number of clips: 1595 
+time: 118.05 search...95.3%
+loading s21-d29.avi number of clips: 103 
+time: 0.26 search...96.1%
+loading s29-d31.avi number of clips: 180 
+time: 0.56 search...96.9%
+loading s21-d35.avi number of clips: 102 
+time: 0.25 search...97.6%
+loading s30-d26.avi number of clips: 1012 
+time: 32.78 search...98.4%
+loading s30-d52.avi number of clips: 430 
+time: 3.56 search...99.2%
+loading s13-d54.avi number of clips: 479 
+time: 4.37 search...100.0%
+IoU=0.1, R@10:
+1. s13-d31.avi start: 4332 end: 4625 score: 5.90
+2. s13-d25.avi start: 2291 end: 2520 score: 5.50
+3. s13-d25.avi start: 2716 end: 2899 score: 5.09
+4. s29-d39.avi start: 8505 end: 8686 score: 4.10
+5. s23-d31.avi start: 1809 end: 2031 score: 3.91
+6. s13-d31.avi start: 4601 end: 4764 score: 3.22
+7. s23-d46.avi start: 9979 end: 10086 score: 2.94
+8. s23-d46.avi start: 10172 end: 10304 score: 2.82
+9. s13-d31.avi start: 4060 end: 4270 score: 2.69
+10. s23-d34.avi start: 1312 end: 1435 score: 2.39
+11. s23-d39.avi start: 2056 end: 2288 score: 2.38
+12. s23-d31.avi start: 1104 end: 1257 score: 2.25
+13. s26-d26.avi start: 9336 end: 9540 score: 2.21
+14. s13-d31.avi start: 3779 end: 3967 score: 2.18
+15. s23-d21.avi start: 4069 end: 4208 score: 2.17
+16. s23-d39.avi start: 1150 end: 1296 score: 1.87
+17. s23-d34.avi start: 4857 end: 4951 score: 1.79
+18. s13-d25.avi start: 2517 end: 2710 score: 1.78
+19. s23-d31.avi start: 1287 end: 1533 score: 1.71
+20. s23-d39.avi start: 699 end: 962 score: 1.60
+21. s26-d69.avi start: 15327 end: 15764 score: 1.58
+22. s35-d48.avi start: 2923 end: 3074 score: 1.52
+23. s23-d39.avi start: 5021 end: 5161 score: 1.48
+24. s23-d31.avi start: 1608 end: 1844 score: 1.41
+25. s29-d42.avi start: 20023 end: 20156 score: 1.21
+26. s29-d39.avi start: 2498 end: 2654 score: 1.13
+27. s30-d26.avi start: 3209 end: 3394 score: 1.06
+28. s23-d34.avi start: 3788 end: 3925 score: 0.96
+29. s26-d26.avi start: 8647 end: 8905 score: 0.86
+30. s23-d31.avi start: 2976 end: 3210 score: 0.65
+31. s23-d34.avi start: 3094 end: 3349 score: 0.64
+32. s35-d41.avi start: 25100 end: 25264 score: 0.62
+33. s26-d26.avi start: 9580 end: 9833 score: 0.58
+34. s26-d26.avi start: 6848 end: 7181 score: 0.46
+35. s23-d39.avi start: 4785 end: 5052 score: 0.43
+36. s36-d43.avi start: 239 end: 608 score: 0.38
+37. s37-d46.avi start: 13468 end: 13642 score: 0.37
+38. s23-d34.avi start: 3624 end: 3747 score: 0.35
+39. s13-d25.avi start: 860 end: 1254 score: 0.24
+40. s23-d46.avi start: 9504 end: 9612 score: 0.22
+41. s32-d27.avi start: 22044 end: 22214 score: 0.11
+42. s29-d39.avi start: 5094 end: 5423 score: 0.09
+43. s29-d39.avi start: 5782 end: 5923 score: 0.02

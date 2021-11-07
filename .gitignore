@@ -1,0 +1,7 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+/c3d/models/*
+/checkpoints/*
+/exp_data/*
+/skip_thoughts/embeddings/*
