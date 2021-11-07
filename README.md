@@ -1,6 +1,6 @@
 # TAL
 
-Implement of temporal activity localization (TAL)
+Implement of temporal activity localization (TAL) on tensorflow
 
 Include :
 - Temporal Activity Localization via Language (TALL)
@@ -11,9 +11,9 @@ Include :
 Cross-modal Temporal Regression Localizer (CTRL) include : 
 
 - Visual Encoder :
-use C3D to extract feature (C3D pretrain on sport1M)
+C3D extract feature for video clips(pretrain on sport1M)
 - Sentence Encoder :
-use skip-thoughts encoder sentence as feature
+skip-thoughts encoder extract embeddings
 - Multi-modal processing network :
 generate combined representations for visual and text domain
 - Temporal regression network :
