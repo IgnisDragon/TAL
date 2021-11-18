@@ -1,6 +1,7 @@
 import tensorflow.compat.v1 as tf
 import numpy as np
 import time
+from datetime import datetime
 import operator
 
 import dataset
@@ -65,7 +66,9 @@ def query_slidingclips(sess, vs_eval_op, model, visual_feature, query_feature, t
     for query in query_feature.sent_feat:
         sent_vec = query[1]
         sent_vec = np.reshape(sent_vec, [1, sent_vec.shape[0]])
-
+        print('----------------------------------------------------')
+        test_result.write('----------------------------------------------------\n')
+        total_time = time.time()
         total = []
         for k in range(len(visual_feature.movie_names)):
             start_time = time.time()
@@ -88,8 +91,7 @@ def query_slidingclips(sess, vs_eval_op, model, visual_feature, query_feature, t
                 }
                 outputs = sess.run(vs_eval_op, feed_dict=feed_dict)
                 sentence_image_mat[t] = outputs[0] # alignment score
-                #reg_clip_length = (end - start) * (10**outputs[2])
-                #reg_mid_point = (start + end) / 2.0 + movie_length * outputs[1]
+
                 reg_end = end + outputs[2]
                 reg_start = start + outputs[1]
                 
@@ -104,13 +106,13 @@ def query_slidingclips(sess, vs_eval_op, model, visual_feature, query_feature, t
             test_result.write('loading {} number of clips: {} time: {:.2f} search...{:.1f}%\n'
                         .format(movie_name, len(movie_clip_featmaps), duration, (k + 1) / len(visual_feature.movie_names) * 100.0))
 
+        # remove duplicate in list
         ranks_set = set(tuple(x) for x in total)
         ranks = [list(x) for x in ranks_set]
         top_n_rank = [i for i in sorted(ranks, key=lambda x:x[0], reverse=True)]
-
-        print("IoU={}, R@{}:".format(IoU, top_n))
-        test_result.write("Query: " + query[0] + "\n")
-        test_result.write("IoU={}, R@{}:\n".format(IoU, top_n))
+        total_duration = time.time() - total_time
+        print("\nQuery:{}\nIoU={}, R@{}:".format(query[0], IoU, top_n))    
+        test_result.write("\nQuery:{}\nIoU={}, R@{}:\n".format(query[0], IoU, top_n))
         for i in range(len(top_n_rank)):
             if i < top_n: 
                 print('{}. {} start: {:.0f} end: {:.0f}'
@@ -118,20 +120,22 @@ def query_slidingclips(sess, vs_eval_op, model, visual_feature, query_feature, t
             if top_n_rank[i][0] > 0:
                 test_result.write('{}. {} start: {:.0f} end: {:.0f} score: {:.2f}\n'
                             .format(i + 1, top_n_rank[i][1], top_n_rank[i][2], top_n_rank[i][3], top_n_rank[i][0]))
+        print('-total time: {} average time: {}'.format(total_duration, total_duration / len(visual_feature.movie_names)))
+        test_result.write('-total time: {} average time: {:.2f}'.format(total_duration, total_duration / len(visual_feature.movie_names)))
 
-def run_predict():
+def run_predict(Iou=0.5, top_n=10):
 
     test_feature_dir = "E:/File/VS Code/DataSet/TACoS/Interval128_256_overlap0.8_c3d_fc6/"
     #train_feature_dir = "E:/File/VS Code/DataSet/TACOS/Interval64_128_256_512_overlap0.8_c3d_fc6/"
     query_file = "./dataset/query.txt"
 
-    log = time.strftime("%Y-%m-%d %H:%M", time.localtime()) 
+    log = '{0:%Y-%m-%d-%H-%M}'.format(datetime.now())
     result_log = open("./results/{}_results.txt".format(log), "w")  
-
+    
     model = ctrl_model.CTRL_Model()
     visual_feat = dataset.movieDataset(test_feature_dir)
     query_feat = dataset.queryEncoder(query_file)
-
+    
     with tf.Graph().as_default():
 		
         vs_eval_op = model.construct_test_model()
@@ -152,12 +156,10 @@ def run_predict():
         else:
             print("[*] Not find pretrained model!")
 
-        start_time = time.time()
-        query_slidingclips(sess, vs_eval_op, model, visual_feat, query_feat, result_log)
-        duration = time.time() - start_time
-        print("times: " + str(duration))
+        query_slidingclips(sess, vs_eval_op, model, visual_feat, query_feat, result_log, Iou, top_n)
     
     result_log.close()
-
+    
 if __name__ == '__main__':
-    run_predict()
+
+    run_predict(Iou=0.1)

@@ -3,7 +3,7 @@ import tensorflow.compat.v1 as tf
 
 tf.disable_v2_behavior()
 
-def save_ckpt(sess, iter_num, ckpt_dir='checkpoints/'):
+def save_ckpt(sess, iter_num, ckpt_dir='_checkpoints/'):
 
     if not os.path.exists(ckpt_dir): 
         os.makedirs(ckpt_dir)
@@ -12,7 +12,7 @@ def save_ckpt(sess, iter_num, ckpt_dir='checkpoints/'):
     saver.save(sess, ckpt_dir, global_step=iter_num)
     print("[*] Saving model")
     
-def load_ckpt(sess, ckpt_dir='checkpoint/'):
+def load_ckpt(sess, ckpt_dir='_checkpoints/'):
 
     if not os.path.exists(ckpt_dir): 
         os.makedirs(ckpt_dir)

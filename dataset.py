@@ -353,6 +353,7 @@ class movieDataset():
                 self.sliding_clip_names.append(clip_name.split(".")[0] + "." + clip_name.split(".")[1])
 
         self.movie_names = list(movie_names_set)
+        print("movie number: " + str(len(self.movie_names)))
         print("sliding clips number: " + str(len(self.sliding_clip_names)))
 
     def load_movie_slidingclip(self, movie_name):
@@ -413,14 +414,17 @@ class queryEncoder():
         self.encoder = skipthoughts.Encoder(skipthoughts.load_model())
         self.sent_feat = []
 
+        query_sent = []
         with open(self.query_sent_path) as f:
-            query_sent = list(f.readlines())
+            for query in f:
+                if query[0] != '_': query_sent.append(query)
 
-        print('Encoder query...', end=' ')
         query_vec = self.encoder.encode(query_sent)
 
         for i in range(len(query_vec)):
             self.sent_feat.append([query_sent[i], query_vec[i]])
+
+        print("query number: " + str(len(self.sent_feat)))
 
     def load_query_sentence(self):
 

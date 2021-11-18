@@ -5,7 +5,7 @@ import math
 
 def convert(videos_dir, fps):
 
-    videos = [x for x in os.listdir(videos_dir) if x.endswith(".avi")]
+    videos = [x for x in os.listdir(videos_dir) if x.endswith(".mp4")]
 
     for video in videos:
 
@@ -16,15 +16,16 @@ def convert(videos_dir, fps):
         if not os.path.exists(save_dir): 
             os.makedirs(save_dir)
             
-            print(video)
             vidcap = cv2.VideoCapture(file_dir)
             vidlength = math.floor(vidcap.get(cv2.CAP_PROP_FRAME_COUNT))
             vidfps = math.ceil(vidcap.get(cv2.CAP_PROP_FPS))
-            #print('frames: ' + str(length))
-            #print(vidfps / int(fps))
-            if vidlength / (vidfps * 60) > 10:  # over 10 mins
-                continue
-
+            print(video)
+            print('frames: {}, fps: {}'.format(vidlength, vidfps))
+            frames = vidlength / (vidfps / int(fps))
+            print('number: {:.0f}'.format(frames))
+            
+            #if vidlength / (vidfps * 60) > 10:  # over 10 mins
+            #    continue
             count = 0
             for i in tqdm(range(vidlength)):
                 

@@ -1,13 +1,10 @@
-#!/usr/bin/env python3
-# encoding: utf-8
-#import cv2
 import tensorflow.compat.v1 as tf
 import input_data
-import c3d_model_extract as c3d_model
+import c3d_model
 import numpy as np
 import time
 
-tf.compat.v1.disable_eager_execution()
+tf.disable_v2_behavior()
 
 def placeholder_inputs(batch_size):
     """Generate placeholder variables to represent the input tensors.
@@ -31,15 +28,12 @@ def placeholder_inputs(batch_size):
 
     return images_placeholder, labels_placeholder
 
-def _variable_on_cpu(name, shape, initializer):
-    #with tf.device('/cpu:%d' % cpu_id):
-    with tf.device('/cpu:0'):
-        var = tf.get_variable(name, shape, initializer=initializer)
-        
-    return var
+def variable_with_weight_decay(name, shape, stddev, wd, initializer=None):
+    
+    if initializer == None: 
+        initializer = tf.truncated_normal_initializer(stddev=stddev)
 
-def _variable_with_weight_decay(name, shape, stddev, wd):
-    var = _variable_on_cpu(name, shape, tf.truncated_normal_initializer(stddev=stddev))
+    var = tf.get_variable(name, shape, initializer)
 
     if wd is not None:
         weight_decay = tf.nn.l2_loss(var) * wd
@@ -56,10 +50,11 @@ def variable_weight(name, shape, stddev=0.04, initializer=None):
 
     return var
 
+def feature_extract(batch_size=1, extract=None):
 
-def feature_extract(batch_size=10, extract=None):
     model_name = "./models/conv3d_deepnetA_sport1m_iter_1900000_TF.model"
     test_list_file = './dataset/test.txt'
+
     num_test_videos = len(list(open(test_list_file,'r')))
     print("Number of test videos={}".format(num_test_videos))
 
@@ -97,7 +92,9 @@ def feature_extract(batch_size=10, extract=None):
     logits = c3d_model.inference_c3d(images_placeholder, batch_size, weights, biases)
 
     saver = tf.train.Saver()
-    sess = tf.Session(config=tf.ConfigProto(allow_soft_placement=True))
+    gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction = 0.8)
+    gpu_options.allow_soft_placement=True
+    sess = tf.Session(config=gpu_options)
 
     init = tf.global_variables_initializer()
     sess.run(init)
@@ -110,15 +107,13 @@ def feature_extract(batch_size=10, extract=None):
     #for var, val in zip(vars, vars_vals):
         #print(var.name)
         #print("var: {}, value: {}".format(var.name, val)) #...or sort it in a list....
-    # And then after everything is built, start the training loop.
 
-    #write_file = open("predict_ret.txt", "w")
+    # And then after everything is built, start the training loop.
     next_start_pos = 0
-    
     all_steps = int((num_test_videos - 1) / batch_size) + 1
+
     for step in range(all_steps):
-        # Fill a feed dictionary with the actual set of images and labels
-        # for this particular training step.
+
         start_time = time.time()
         test_images, next_start_pos, _, valid_len = \
             input_data.read_clip(
@@ -127,24 +122,14 @@ def feature_extract(batch_size=10, extract=None):
                 start_pos=next_start_pos,
                 num_frames_per_clip=128
             )
-        _, variables = sess.run(logits, feed_dict={images_placeholder: test_images})
+        _, variables = sess.run(logits, feed_dict={images_placeholder:test_images})
         
         if extract != None:
             feature = variables.get(extract)
             np.save(extract + '_' + str(step), feature)
-        """
-        for i in range(0, valid_len):
-            true_label = test_labels[i],
-            top1_predicted_label = np.argmax(predict_score[i])
-            # Write results: true label, class prob for true label, predicted label, class prob for predicted label
-            write_file.write('true label:{}, {}, predicted label:{}, {}\n'.format(
-                    true_label[0],
-                    predict_score[i][true_label],
-                    top1_predicted_label,
-                    predict_score[i][top1_predicted_label]))
-        """
-    #write_file.close()
+
     print("done")
 
 if __name__ == '__main__':
-    feature_extract(1, 'fc1')
+
+    feature_extract(extract='fc1')

@@ -2,6 +2,8 @@
 __pycache__/
 
 /c3d/models/*
-/checkpoints/*
+/_checkpoints/*
 /exp_data/*
 /skip_thoughts/embeddings/*
+/dataset/*
+/results/*

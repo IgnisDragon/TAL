@@ -110,7 +110,7 @@ def do_eval_slidingclips(sess, vs_eval_op, model, movie_length_info, iter_step, 
         for k in range(len(movie_clip_sentences)):
             #sentence_clip_name=movie_clip_sentences[k][0]
             #start=float(sentence_clip_name.split("_")[1])
-            #end=float(sentence_clip_name.split("_")[2].split("_")[0])      
+            #end=float(sentence_clip_name.split("_")[2].split("_")[0])
             sent_vec = movie_clip_sentences[k][1]
             sent_vec = np.reshape(sent_vec,[1, sent_vec.shape[0]])
             for t in range(len(movie_clip_featmaps)):
@@ -167,7 +167,7 @@ def run_training(max_steps=20000, batch_size=56, initial_steps=0):
     train_csv_path = "./exp_data/TACoS/train_clip-sentvec.pkl"
     test_csv_path = "./exp_data/TACoS/test_clip-sentvec.pkl"
     test_feature_dir = "E:/File/VS Code/DataSet/TACoS/Interval128_256_overlap0.8_c3d_fc6/"
-    train_feature_dir = "E:/File/VS Code/DataSet//TACOS/Interval64_128_256_512_overlap0.8_c3d_fc6/"
+    train_feature_dir = "E:/File/VS Code/DataSet/TACOS/Interval64_128_256_512_overlap0.8_c3d_fc6/"
     test_result_output = open("ctrl_test_results.txt", "w")    
     model = ctrl_model.CTRL_Model(batch_size, train_csv_path, test_csv_path, test_feature_dir, train_feature_dir)
     
