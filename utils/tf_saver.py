@@ -1,23 +1,38 @@
 import os
 import tensorflow.compat.v1 as tf
 
-tf.disable_v2_behavior()
+#tf.disable_v2_behavior()
 
-def save_ckpt(sess, iter_num, ckpt_dir='_checkpoints/'):
+def save_ckpt(saver, sess, name=None, step=None, ckpt_dir='_checkpoints/'):
 
     if not os.path.exists(ckpt_dir): 
         os.makedirs(ckpt_dir)
 
-    saver = tf.train.Saver()
-    saver.save(sess, ckpt_dir, global_step=iter_num)
+    ckpt = os.path.join(ckpt_dir, name).replace('\\', '/')
+
+    saver.save(sess, ckpt, global_step=step)
     print("[*] Saving model")
     
-def load_ckpt(sess, ckpt_dir='_checkpoints/'):
+def load_ckpt(saver, sess, name=None, step=None, ckpt_dir='_checkpoints/'):
 
-    if not os.path.exists(ckpt_dir): 
-        os.makedirs(ckpt_dir)
+    if name:
 
-    saver = tf.train.Saver()
+        files = [x.split('.')[0] for x in os.listdir(ckpt_dir) if name in x and x.endswith('.index')]
+        files.sort(key=lambda x: int(x.split('-')[1]))
+
+        if len(files) == 0: return False, 0 
+
+        if step:
+            full_path = os.path.join(ckpt_dir, name + '-' + str(step))
+            saver.restore(sess, full_path)
+            return True, int(step)
+        
+        full_path = os.path.join(ckpt_dir, files[-1])     
+        global_step = int(full_path.split('/')[-1].split('-')[-1])
+        saver.restore(sess, full_path)
+
+        return True, global_step
+    
     ckpt = tf.train.get_checkpoint_state(ckpt_dir)
 
     if ckpt and ckpt.model_checkpoint_path:
