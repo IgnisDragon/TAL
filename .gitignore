@@ -1,8 +1,7 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 
-/c3d/models/*
-/i3d/models/*
+/extractor/models/*
 /_checkpoints/*
 /exp_data/*
 /skip_thoughts/embeddings/*

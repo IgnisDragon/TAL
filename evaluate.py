@@ -169,12 +169,12 @@ def do_eval_slidingclips(sess, vs_eval_op, model, test_set, context_size, iter_s
 
     eval_output.close()
 
-def run_training(max_steps=40000, batch_size=56, context_size=1, load_model=True):
+def run_training(max_steps=20000, batch_size=56, context_size=1, load_model=True):
 
     train_feature_dir = "E:/File/VS Code/DataSet/TACOS/Interval64_128_i3d_mixed5/"
     test_feature_dir = "E:/File/VS Code/DataSet/TACoS/Interval128_i3d_mixed5/"
-    train_csv_path = "./exp_data/train_sentence.pkl"
-    test_csv_path = "./exp_data/test_sentence.pkl"
+    train_csv_path = "./exp_data/train_clip_sentence.pkl"
+    test_csv_path = "./exp_data/test_clip_sentence.pkl"
     log_time = '{0:%Y-%m-%d-%H-%M}'.format(datetime.datetime.now())
 
     train_set = TrainingDataSet(train_feature_dir, train_csv_path, batch_size)
@@ -184,17 +184,16 @@ def run_training(max_steps=40000, batch_size=56, context_size=1, load_model=True
     training_time = time.time()
     with tf.Graph().as_default():
 		
-        loss_align_reg, vs_train_op, vs_eval_op, offset_pred, loss_reg = model.construct_model()
+        loss_align_reg, train_op, eval_op, offset_pred, loss_reg, loss_align = model.construct_model()
         # Create a session for running Ops on the Graph.
         gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction = 0.8)
         config = tf.ConfigProto(gpu_options = gpu_options)
         #config.gpu_options.allow_growth = True
         sess = tf.Session(config=config)
         # Run the Op to initialize the variables.
-        init = tf.global_variables_initializer()
-        sess.run(init)
+        sess.run(tf.global_variables_initializer())
+        
         saver = tf.train.Saver()
-
         if load_model:
             load_model_status, global_step = ckpt.load_ckpt(saver, sess, name='model')
             if load_model_status:
@@ -207,15 +206,16 @@ def run_training(max_steps=40000, batch_size=56, context_size=1, load_model=True
 
             image_batch, sentence_batch, offset_batch = train_set.next_batch_iou()
             feed_dict = model.fill_feed_dict_train_reg(image_batch, sentence_batch, offset_batch)
-            _, loss, _, _ = sess.run([vs_train_op, loss_align_reg, offset_pred, loss_reg], feed_dict=feed_dict)
+            _, loss, loss_r, loss_a = sess.run([train_op, loss_align_reg, loss_reg, loss_align], feed_dict=feed_dict)
 
             if (step + 1) % 50 == 0:
-                print('Step {}: loss = {:.3f} ({:.3f} sec)'.format(step + 1, loss, time.time() - start_time))
+                print('Step {}: loss = {:.3f}, loss_reg = {:.3f}, loss_align = {:.3f}, ({:.3f} sec)'
+                        .format(step + 1, loss, loss_r, loss_a, time.time() - start_time))
 
             if (step + 1) % 2000 == 0:
                 ckpt.save_ckpt(saver, sess, name='model', step=step + 1)
                 print("Start to test:-----------------")
-                do_eval_slidingclips(sess, vs_eval_op, model, test_set, context_size, step + 1, log_time)              
+                do_eval_slidingclips(sess, eval_op, model, test_set, context_size, step + 1, log_time)              
     
     duration = time.time() - training_time
     print('- time: {}'.format(datetime.timedelta(seconds=duration)))

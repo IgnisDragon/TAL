@@ -6,7 +6,7 @@ import tensorflow.compat.v1 as tf
 from layers import *
 
 class CTRL_Model(object):
-    def __init__(self, batch_size=56, context_num=1, learning_rate=1e-3):
+    def __init__(self, batch_size=56, context_num=1, learning_rate=1e-2):
         
         self.batch_size = batch_size
         self.test_batch_size = 1
@@ -70,45 +70,79 @@ class CTRL_Model(object):
         
         return comb_feature
     
+    def multilayer(self, x, filter_size=1000):
+
+        with tf.variable_scope("multilayer_it", reuse=tf.AUTO_REUSE):
+
+            layer1 = conv_layer(x, filter_size, ksize=1, name='layer1')
+            layer2 = conv_layer(layer1, 3, ksize=1, relu=False, name='layer2')
+
+        return layer2
+
     '''
     visual semantic inference, including visual semantic alignment and clip location regression
     '''
     def visual_semantic_train(self, visual_feat, sentence_embed):
 
         with tf.variable_scope("CTRL_Model", reuse=tf.AUTO_REUSE):
-
             print("Building train network...............................")
-            # 對視覺特徵投影到語義空間並norm
-            transformed_clip = fc_layer(visual_feat, self.semantic_size, relu=False, name='v2s_lt') 
-            transformed_clip = tf.nn.l2_normalize(transformed_clip, dim=1)
-            # 對本文特徵投影到語義空間並norm
-            transformed_sentence = fc_layer(sentence_embed, self.semantic_size, relu=False, name='s2s_lt')
-            transformed_sentence = tf.nn.l2_normalize(transformed_sentence, dim=1)
-            # 特徵交叉
-            cross_modal_vec = self.cross_modal_comb(transformed_clip, transformed_sentence, self.batch_size)
-            # 2層FC得到預測結果
-            layer1 = conv_layer(cross_modal_vec, 1000, ksize=1, name='layer1_lt')
-            layer2 = conv_layer(layer1, 3, ksize=1, relu=False, name='layer2_lt')
+            #trans_clip = tf.reduce_mean(visual_feat, axis=2)
+            trans_clip = tf.transpose(visual_feat, [0,2,1])
+            trans_clip = tf.reshape(trans_clip, [-1, self.visual_feature_dim])
+    
+            trans_clip = fc_layer(trans_clip, self.semantic_size, relu=False, name='v2s_lt')
+            trans_clip = tf.reshape(trans_clip, [self.batch_size, 2*self.context_num+1, self.semantic_size])
+            
+            trans_sentence = fc_layer(sentence_embed, self.semantic_size, relu=False, name='s2s_lt')
+            sentence_tanh = tf.tanh(trans_sentence)
+            concat_sentence = tf.reshape(tf.tile(sentence_tanh, [1, 2*self.context_num+1]), 
+                                        [self.batch_size, 2*self.context_num+1, self.semantic_size])
 
-            sim_score_mat = tf.reshape(layer2, [self.batch_size, self.batch_size, 3])
+            alpha = tf.nn.softmax(tf.reduce_sum(tf.multiply(concat_sentence, trans_clip), 2))
+            alpha = tf.reshape(tf.tile(alpha, [1, self.semantic_size]),
+                                [self.batch_size, self.semantic_size, 2*self.context_num+1])
+            
+            trans_clip = tf.transpose(trans_clip,[0,2,1])
+            input_vision = tf.reduce_sum(tf.multiply(trans_clip, alpha), 2) 
+            
+            input_vision = tf.nn.l2_normalize(input_vision, axis=1)
+            trans_sentence = tf.nn.l2_normalize(trans_sentence, axis=1)
+
+            cross_modal_vec = self.cross_modal_comb(input_vision, trans_sentence, self.batch_size)
+            sim_score_mat = self.multilayer(cross_modal_vec)
+            sim_score_mat = tf.reshape(sim_score_mat, [self.batch_size, self.batch_size, 3])
 
             return sim_score_mat
 
     def visual_semantic_test(self, visual_feat, sentence_embed):
         
         with tf.variable_scope("CTRL_Model", reuse=True):
-
             print("Building test network...............................")
-            transformed_clip = fc_layer(visual_feat, self.semantic_size, relu=False, name='v2s_lt') 
-            transformed_clip = tf.nn.l2_normalize(transformed_clip, dim=1)
-            transformed_sentence = fc_layer(sentence_embed, self.semantic_size, relu=False, name='s2s_lt')
-            transformed_sentence = tf.nn.l2_normalize(transformed_sentence, dim=1)
-
-            cross_modal_vec = self.cross_modal_comb(transformed_clip, transformed_sentence, self.test_batch_size)
-            layer1 = conv_layer(cross_modal_vec, 1000, ksize=1, name='layer1_lt')
-            layer2 = conv_layer(layer1, 3, ksize=1, relu=False, name='layer2_lt')
+            #trans_clip = tf.reduce_mean(visual_feat, axis=2)
+            trans_clip = tf.transpose(visual_feat, [0,2,1])
+            trans_clip = tf.reshape(trans_clip, [-1, self.visual_feature_dim])
+    
+            trans_clip = fc_layer(trans_clip, self.semantic_size, relu=False, name='v2s_lt')
+            trans_clip = tf.reshape(trans_clip, [self.test_batch_size, 2*self.context_num+1, self.semantic_size])
             
-            sim_score_mat = tf.reshape(layer2, [3])
+            trans_sentence = fc_layer(sentence_embed, self.semantic_size, relu=False, name='s2s_lt')
+            sentence_tanh = tf.tanh(trans_sentence)
+            concat_sentence = tf.reshape(tf.tile(sentence_tanh, [1, 2*self.context_num+1]), 
+                                        [self.test_batch_size, 2*self.context_num+1, self.semantic_size])
+
+            alpha = tf.nn.softmax(tf.reduce_sum(tf.multiply(concat_sentence, trans_clip), 2))
+            alpha = tf.reshape(tf.tile(alpha, [1, self.semantic_size]),
+                                [self.test_batch_size, self.semantic_size, 2*self.context_num+1])
+            
+            trans_clip = tf.transpose(trans_clip,[0,2,1])
+            input_vision = tf.reduce_sum(tf.multiply(trans_clip, alpha), 2) 
+            
+            input_vision = tf.nn.l2_normalize(input_vision, dim=1)
+            trans_sentence = tf.nn.l2_normalize(trans_sentence, dim=1)
+
+            cross_modal_vec = self.cross_modal_comb(input_vision, trans_sentence, self.test_batch_size)
+            sim_score_mat = self.multilayer(cross_modal_vec)
+            sim_score_mat = tf.reshape(sim_score_mat, [3])
 
             return sim_score_mat
 
@@ -147,7 +181,7 @@ class CTRL_Model(object):
 
         loss = tf.add(tf.multiply(self.lambda_regression, loss_reg), loss_align) # 0.01
 
-        return loss, offset_pred, loss_reg
+        return loss, offset_pred, loss_reg, loss_align
 
     def init_placeholder(self):
 
@@ -195,11 +229,11 @@ class CTRL_Model(object):
         sim_reg_mat = self.visual_semantic_train(self.visual_feat_train, self.sent_train)
         sim_reg_mat_test = self.visual_semantic_test(self.visual_feat_test, self.sent_test)
         # compute loss
-        self.loss_align_reg, offset_pred, loss_reg = self.compute_loss_reg(sim_reg_mat, self.offset)
+        self.loss_align_reg, offset_pred, loss_reg, loss_align = self.compute_loss_reg(sim_reg_mat, self.offset)
         # optimize
         self.vs_train_op = self.training(self.loss_align_reg)
 
-        return self.loss_align_reg, self.vs_train_op, sim_reg_mat_test, offset_pred, loss_reg
+        return self.loss_align_reg, self.vs_train_op, sim_reg_mat_test, offset_pred, loss_reg, loss_align
 
     def construct_test_model(self):
         # initialize the placeholder
