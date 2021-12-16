@@ -9,7 +9,7 @@ Include :
 - skip-thoughts
 
 ## CTRL
----
+
 Cross-modal Temporal Regression Localizer (CTRL) include : 
 
 - Visual Encoder :
@@ -25,7 +25,7 @@ generate combined representations for visual and text domain
 produce alignment scores and location offsets between the input sentence query and video clips
 
 ## ROLE
----
+
 cRoss-modal mOment Localization nEtwork (ROLE), composing a language-temporal attention network, a multi-modal processing, and a MLP module.
 
 - Language-Temporal Attention Network : 
@@ -39,7 +39,7 @@ generate cross-modal representation by concate temporal visual moment and textua
 strong representation power of non-linear hidden layers enables complicated interactions among the features of the cross-modal representation
 
 ## ARCN
----
+
 Attentive Cross-Modal Retrieval Network (ACRN) comprises of the following components:
 - Memory Attention Network : 
 leverages the weighting contexts to enhance the visual embedding of each moment
@@ -52,10 +52,13 @@ estimates the relevance scores and predicts the location offsets of the golden m
 
 # Reference
 TALL: Temporal Activity Localization via Language Query
+
 https://openaccess.thecvf.com/content_ICCV_2017/papers/Gao_TALL_Temporal_Activity_ICCV_2017_paper.pdf
 
 Cross-modal Moment Localization in Videos
+
 https://www.researchgate.net/profile/Meng-Liu-67/publication/328374995_Cross-modal_Moment_Localization_in_Videos/links/6052a318a6fdccbfeae93f75/Cross-modal-Moment-Localization-in-Videos.pdf
 
 Attentive Moment Retrieval in Videos
+
 http://staff.ustc.edu.cn/~hexn/papers/sigir18-video-retrieval.pdf
