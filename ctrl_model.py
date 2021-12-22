@@ -6,7 +6,7 @@ import tensorflow.compat.v1 as tf
 from layers import *
 
 class CTRL_Model(object):
-    def __init__(self, batch_size=56, context_num=1, learning_rate=1e-2):
+    def __init__(self, batch_size=56, context_num=1, learning_rate=1e-3):
         
         self.batch_size = batch_size
         self.test_batch_size = 1
@@ -14,8 +14,8 @@ class CTRL_Model(object):
         self.lambda_regression = 0.01
         self.alpha = 1.0 / batch_size
         self.context_num = context_num
-        self.sentence_embedding_size = 4800 # emmbedding size
-        self.visual_feature_dim = 1024 # visual feature size
+        self.sentence_embedding_size = 4800
+        self.visual_feature_dim = 1024
         self.semantic_size = 1024 # the size of visual and semantic comparison size
         #self.train_set=TrainingDataSet(train_visual_feature_dir, train_csv_path, self.batch_size)
         #self.test_set=TestingDataSet(test_visual_feature_dir, test_csv_path, self.test_batch_size)
@@ -55,7 +55,6 @@ class CTRL_Model(object):
         # [batch_size * batch_size, self.semantic_size] 
         vv_feature = tf.reshape(tf.tile(visual_feat, [batch_size, 1]),
                                 [batch_size, batch_size, self.semantic_size]) 
-        # [batch_size, batch_size * self.semantic_size]  
         ss_feature = tf.reshape(tf.tile(sentence_embed, [1, batch_size]), 
                                 [batch_size, batch_size, self.semantic_size])
         concat_feature = tf.reshape(tf.concat([vv_feature, ss_feature], 2),
@@ -79,6 +78,24 @@ class CTRL_Model(object):
 
         return layer2
 
+    def visual_attention(self, visual_feature, sentence_feature):
+
+        visual_feature = tf.reshape(visual_feature, [-1, 2*self.context_num+1, self.semantic_size])
+
+        sentence_tanh = tf.tanh(sentence_feature)
+        concat_sentence = tf.reshape(tf.tile(sentence_tanh, [1, 2*self.context_num+1]), 
+                                    [-1, 2*self.context_num+1, self.semantic_size])
+
+        vs_alpha = tf.reduce_sum(tf.multiply(concat_sentence, visual_feature), 2)
+        alpha = tf.nn.softmax(vs_alpha)
+        alpha = tf.reshape(tf.tile(alpha, [1, self.semantic_size]),
+                            [-1, self.semantic_size, 2*self.context_num+1])
+        
+        visual_feature = tf.transpose(visual_feature, [0,2,1])
+        input_vision = tf.reduce_sum(tf.multiply(visual_feature, alpha), 2) 
+
+        return input_vision
+
     '''
     visual semantic inference, including visual semantic alignment and clip location regression
     '''
@@ -91,19 +108,9 @@ class CTRL_Model(object):
             trans_clip = tf.reshape(trans_clip, [-1, self.visual_feature_dim])
     
             trans_clip = fc_layer(trans_clip, self.semantic_size, relu=False, name='v2s_lt')
-            trans_clip = tf.reshape(trans_clip, [self.batch_size, 2*self.context_num+1, self.semantic_size])
-            
             trans_sentence = fc_layer(sentence_embed, self.semantic_size, relu=False, name='s2s_lt')
-            sentence_tanh = tf.tanh(trans_sentence)
-            concat_sentence = tf.reshape(tf.tile(sentence_tanh, [1, 2*self.context_num+1]), 
-                                        [self.batch_size, 2*self.context_num+1, self.semantic_size])
-
-            alpha = tf.nn.softmax(tf.reduce_sum(tf.multiply(concat_sentence, trans_clip), 2))
-            alpha = tf.reshape(tf.tile(alpha, [1, self.semantic_size]),
-                                [self.batch_size, self.semantic_size, 2*self.context_num+1])
             
-            trans_clip = tf.transpose(trans_clip,[0,2,1])
-            input_vision = tf.reduce_sum(tf.multiply(trans_clip, alpha), 2) 
+            input_vision = self.visual_attention(trans_clip, trans_sentence)
             
             input_vision = tf.nn.l2_normalize(input_vision, axis=1)
             trans_sentence = tf.nn.l2_normalize(trans_sentence, axis=1)
@@ -122,20 +129,10 @@ class CTRL_Model(object):
             trans_clip = tf.transpose(visual_feat, [0,2,1])
             trans_clip = tf.reshape(trans_clip, [-1, self.visual_feature_dim])
     
-            trans_clip = fc_layer(trans_clip, self.semantic_size, relu=False, name='v2s_lt')
-            trans_clip = tf.reshape(trans_clip, [self.test_batch_size, 2*self.context_num+1, self.semantic_size])
-            
+            trans_clip = fc_layer(trans_clip, self.semantic_size, relu=False, name='v2s_lt') 
             trans_sentence = fc_layer(sentence_embed, self.semantic_size, relu=False, name='s2s_lt')
-            sentence_tanh = tf.tanh(trans_sentence)
-            concat_sentence = tf.reshape(tf.tile(sentence_tanh, [1, 2*self.context_num+1]), 
-                                        [self.test_batch_size, 2*self.context_num+1, self.semantic_size])
-
-            alpha = tf.nn.softmax(tf.reduce_sum(tf.multiply(concat_sentence, trans_clip), 2))
-            alpha = tf.reshape(tf.tile(alpha, [1, self.semantic_size]),
-                                [self.test_batch_size, self.semantic_size, 2*self.context_num+1])
             
-            trans_clip = tf.transpose(trans_clip,[0,2,1])
-            input_vision = tf.reduce_sum(tf.multiply(trans_clip, alpha), 2) 
+            input_vision = self.visual_attention(trans_clip, trans_sentence)
             
             input_vision = tf.nn.l2_normalize(input_vision, dim=1)
             trans_sentence = tf.nn.l2_normalize(trans_sentence, dim=1)
@@ -206,7 +203,7 @@ class CTRL_Model(object):
         for name in name_list:
             print("Variables of <{}>".format(name))
             for v in v_dict[name]:
-                print(v)
+                print(v.name)
 
         return v_dict
 

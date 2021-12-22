@@ -67,7 +67,8 @@ class dataset():
 
         frames = []
         count = 0
-        index = int(start * sample * (1 - overlap))
+        index = start * int(sample * (1 - overlap))
+        #print(index, index + sample)
 
         if index + sample >= len(images): return [], -1
 
@@ -103,7 +104,6 @@ class dataset():
 
     def next_batch(self, start_pos, batch_index, sample, overlap=0.8):
         
-        movie_name = self.movie_name[start_pos]
         next_start = start_pos
         next = batch_index
 
@@ -121,7 +121,7 @@ class dataset():
                 batch.append(images)
                 count += 1
 
-            if next == -1: 
+            elif next == -1: 
                 next = 0
                 next_start += 1
                 if len(batch) != 0: break

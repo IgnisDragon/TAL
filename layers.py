@@ -87,7 +87,7 @@ def fc_layer(x, filter_size, use_bias=True, relu=True, name=None):
     with tf.variable_scope(name, reuse=tf.AUTO_REUSE):
     
         fc = tf.get_variable('weights', [nodes, filter_size], 
-                            initializer=tf.random_normal_initializer())
+                            initializer=tf.random_normal_initializer(tf.sqrt(2 / (nodes + filter_size))))
 
         if use_bias:
             fcb = tf.get_variable('biases', [filter_size], 

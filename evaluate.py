@@ -4,11 +4,13 @@ import datetime
 import operator
 import tensorflow.compat.v1 as tf
 from sklearn.metrics import average_precision_score
+
 import ctrl_model
 from dataset import TestingDataSet
 from dataset import TrainingDataSet
 import utils.tf_saver as ckpt
 
+tf.logging.set_verbosity(tf.logging.WARN) # DEBUG, INFO, WARN, ERROR
 tf.disable_v2_behavior()
 
 def dense_to_one_hot(labels_dense, num_classes):
@@ -92,7 +94,7 @@ def compute_IoU_recall_top_n(top_n, iou_thresh, sentence_image_mat, sentence_ima
 '''
 evaluate the model
 '''
-def do_eval_slidingclips(sess, vs_eval_op, model, test_set, context_size, iter_step, log_time):
+def do_eval_slidingclips(sess, vs_eval_op, model, test_set, iter_step, log_time):
     IoU_thresh = [0.1, 0.2, 0.3, 0.4, 0.5]
     all_correct_num_10 = [0.0] * 5
     all_correct_num_5 = [0.0] * 5
@@ -118,7 +120,7 @@ def do_eval_slidingclips(sess, vs_eval_op, model, test_set, context_size, iter_s
                 end = float(visual_clip_name.split("_")[2].split(".")[0]) # 65
                 #print(visual_clip_name + " " + str(start) + " " + str(end))
                 featmap = movie_clip_featmaps[t][1] # 4096, 3
-                featmap = np.reshape(featmap, [1, featmap.shape[0], 2 * context_size + 1])
+                featmap = np.reshape(featmap, [1, featmap.shape[0], 2 * model.context_num + 1])
                 
                 feed_dict = {
                     model.visual_feat_test: featmap,
@@ -154,6 +156,7 @@ def do_eval_slidingclips(sess, vs_eval_op, model, test_set, context_size, iter_s
         duration = time.time() - eval_time
         print('- time: {}'.format(datetime.timedelta(seconds=duration)))
 
+    print('---------------results-----------------')
     eval_output = open("./results/{}_eval.txt".format(log_time), "a")
     for k in range(len(IoU_thresh)):
         if (k == 0): eval_output.write("Step " + str(iter_step) + '\n')
@@ -169,10 +172,10 @@ def do_eval_slidingclips(sess, vs_eval_op, model, test_set, context_size, iter_s
 
     eval_output.close()
 
-def run_training(max_steps=20000, batch_size=56, context_size=1, load_model=True):
+def run_training(max_steps=20000, batch_size=50, context_size=1, load_model=True):
 
-    train_feature_dir = "E:/File/VS Code/DataSet/TACOS/Interval64_128_i3d_mixed5/"
-    test_feature_dir = "E:/File/VS Code/DataSet/TACoS/Interval128_i3d_mixed5/"
+    train_feature_dir = "E:/File/VS Code/DataSet/TACOS/Interval64_128_i3d_mixed5c/"
+    test_feature_dir = "E:/File/VS Code/DataSet/TACoS/Interval128_i3d_mixed5c/"
     train_csv_path = "./exp_data/train_clip_sentence.pkl"
     test_csv_path = "./exp_data/test_clip_sentence.pkl"
     log_time = '{0:%Y-%m-%d-%H-%M}'.format(datetime.datetime.now())
@@ -193,7 +196,7 @@ def run_training(max_steps=20000, batch_size=56, context_size=1, load_model=True
         # Run the Op to initialize the variables.
         sess.run(tf.global_variables_initializer())
         
-        saver = tf.train.Saver()
+        saver = tf.train.Saver(max_to_keep=10)
         if load_model:
             load_model_status, global_step = ckpt.load_ckpt(saver, sess, name='model')
             if load_model_status:
@@ -206,22 +209,28 @@ def run_training(max_steps=20000, batch_size=56, context_size=1, load_model=True
 
             image_batch, sentence_batch, offset_batch = train_set.next_batch_iou()
             feed_dict = model.fill_feed_dict_train_reg(image_batch, sentence_batch, offset_batch)
-            _, loss, loss_r, loss_a = sess.run([train_op, loss_align_reg, loss_reg, loss_align], feed_dict=feed_dict)
+            _, loss, loss_r, loss_a, offsets = sess.run([train_op, loss_align_reg, loss_reg, loss_align, offset_pred], 
+                                                        feed_dict=feed_dict)
 
             if (step + 1) % 50 == 0:
-                print('Step {}: loss = {:.3f}, loss_reg = {:.3f}, loss_align = {:.3f}, ({:.3f} sec)'
+                print('Step {}: loss = {:.3f}, reg = {:.3f}, align = {:.3f} ({:.3f} sec)'
                         .format(step + 1, loss, loss_r, loss_a, time.time() - start_time))
-
+                
+                #print('predict:')
+                #for i in range(1):
+                #    print('gt: {}, {} pred: {:.1f}, {:.1f}'
+                #            .format(offset_batch[i][0], offset_batch[i][1], offsets[i][0], offsets[i][1]))
+                
             if (step + 1) % 2000 == 0:
                 ckpt.save_ckpt(saver, sess, name='model', step=step + 1)
                 print("Start to test:-----------------")
-                do_eval_slidingclips(sess, eval_op, model, test_set, context_size, step + 1, log_time)              
+                do_eval_slidingclips(sess, eval_op, model, test_set, step + 1, log_time)              
     
     duration = time.time() - training_time
-    print('- time: {}'.format(datetime.timedelta(seconds=duration)))
+    print('- total time: {}'.format(datetime.timedelta(seconds=duration)))
 
 def main(_):
-    run_training(batch_size=50)
+    run_training()
 
 
 if __name__ == '__main__':

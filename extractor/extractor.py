@@ -1,6 +1,6 @@
 import numpy as np
 import time
-import datetime
+from tqdm import tqdm
 import tensorflow.compat.v1 as tf
 
 tf.disable_v2_behavior()
@@ -29,9 +29,9 @@ def extractor_i3d(batch_size, points='Mixed_5c'):
 
     return logits, inputs
 
-def feature_extract(model_name='c3d', batch_size=1, sample_size=64, overlap=0.8):
+def feature_extract(model_name, batch_size=1, sample_size=64, overlap=0.8):
 
-    save_dir = './extractor/Interval' + str(sample_size) + '_' + model_name + '/'
+    save_dir = './extractor/feature/Interval' + str(sample_size) + '_' + model_name + '/'
     if not os.path.exists(save_dir): 
         os.makedirs(save_dir)
 
@@ -39,7 +39,7 @@ def feature_extract(model_name='c3d', batch_size=1, sample_size=64, overlap=0.8)
     i3d_ckpt = "./extractor/models/i3d_kinetics600.ckpt"
 
     movie_dir = 'E:/File/VS Code/DataSet/TACoS/videos'
-    movie_file = './dataset/TACoS_test.txt'
+    movie_file = './dataset/TACoS_train.txt'
     
     model = None
     movie_data = None
@@ -72,28 +72,30 @@ def feature_extract(model_name='c3d', batch_size=1, sample_size=64, overlap=0.8)
         next = 0
         flag = -1
         count = 0
-        start_time = time.time()
-        while next_start < len(movie_data):
-            
+        num = 1
+        progress = tqdm(total=len(movie_data))
+
+        while True:
+
             data, name, next_start, next = movie_data.next_batch(next_start, next, sample_size, overlap)
 
+            if next_start >= len(movie_data): break
+
             if flag != next_start:
-                if next_start >= len(movie_data): break
                 flag = next_start
                 count = 0
-                print(name)
+                num = 1
+                progress.update(1)
 
             feature = sess.run(logits, feed_dict={inputs:data})
-            
-            for i in range(count, count + batch_size):
-                num = int(i * sample_size * (1 - overlap))
-                path = save_dir + name + '_' + str(num) + '_' + str(num + sample_size)
-                np.save(path, feature[i - next])
 
+            for i in range(count, count + batch_size):
+                path = save_dir + name + '_' + str(num) + '_' + str(num + sample_size)
+                progress.set_description(name + '_' + str(num) + '_' + str(num + sample_size))
+                num += int(sample_size * (1 - overlap))
+                np.save(path, feature[i - next])
+                
             count += batch_size
 
-    duration = time.time() - start_time
-    print('- time: {}'.format(datetime.timedelta(seconds=duration)))
-        
 if __name__ == '__main__':
-    feature_extract('i3d', sample_size=128)
+    feature_extract('i3d', sample_size=64)

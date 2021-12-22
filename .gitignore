@@ -2,6 +2,7 @@
 __pycache__/
 
 /extractor/models/*
+/extractor/feature/*
 /_checkpoints/*
 /exp_data/*
 /skip_thoughts/embeddings/*

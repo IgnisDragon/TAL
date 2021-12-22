@@ -3,7 +3,6 @@ import numpy as np
 import os
 import random
 import pickle
-import skip_thoughts.skipthoughts as skipthoughts
 
 '''
 calculate temporal intersection over union
@@ -269,9 +268,9 @@ class TestingDataSet(object):
         return movie_clip_featmap, movie_clip_sentences
     
     def load_movie_slidingclip(self, movie_name, sample_num):
+        
         movie_clip_sentences = []
         movie_clip_featmap = []
-
         for k in range(len(self.clip_sentence_pairs)):
             if movie_name in self.clip_sentence_pairs[k][0]:
                 movie_clip_sentences.append((self.clip_sentence_pairs[k][0], self.clip_sentence_pairs[k][1][:self.semantic_size]))
@@ -289,17 +288,18 @@ class TestingDataSet(object):
 
         return movie_clip_featmap, movie_clip_sentences
 
-class movieDataset():
+class movieDataset(object):
 
     def __init__(self, movie_dir):
-        # read sliding windows, and match them with the groundtruths to make training samples
+        
         self.sliding_clip_path = movie_dir
-        sliding_clips_tmp = os.listdir(movie_dir)
+        self.visual_feature_dim = 1024
         self.sliding_clip_names = []
+        
         movie_names_set = set()
-
+        sliding_clips_tmp = os.listdir(movie_dir)
         for clip_name in sliding_clips_tmp:
-            if clip_name.split(".")[2]=="npy":
+            if clip_name.split(".")[1]=="npy":
                 movie_name = clip_name.split("_")[0] 
                 if not movie_name in self.sliding_clip_names:
                     movie_names_set.add(movie_name)
@@ -310,27 +310,27 @@ class movieDataset():
         print("sliding clips number: " + str(len(self.sliding_clip_names)))
 
     def load_movie_slidingclip(self, movie_name):
+        
         movie_clip_featmap = []
-
         for k in range(len(self.sliding_clip_names)):
             if movie_name in self.sliding_clip_names[k]:
 
-                visual_feature_path = self.sliding_clip_path + self.sliding_clip_names[k] + ".npy"
-                left_context_feat, right_context_feat = self.get_context_window(self.sliding_clip_names[k] + ".npy", 1)
+                visual_feature_path = self.sliding_clip_path + self.sliding_clip_names[k]
+                left_context_feat, right_context_feat = self.get_context_window(self.sliding_clip_names[k], 1)
                 feature_data = np.load(visual_feature_path)
-
-                comb_feat = np.hstack((left_context_feat, feature_data, right_context_feat))
+                left_context_feat = np.transpose(left_context_feat, [1,0])
+                right_context_feat = np.transpose(right_context_feat, [1,0])
+                comb_feat = np.column_stack((left_context_feat, feature_data, right_context_feat)) 
                 movie_clip_featmap.append((self.sliding_clip_names[k], comb_feat))
 
         return movie_clip_featmap
 
-    def get_context_window(self, clip_name, win_length):
+    def get_context_window(self, clip_name, win_length, clip_length=128):
         movie_name = clip_name.split("_")[0]
         start = int(clip_name.split("_")[1])
         end = int(clip_name.split("_")[2].split(".")[0])
-        clip_length = 128
-        left_context_feats = np.zeros([win_length, 4096], dtype=np.float32)
-        right_context_feats = np.zeros([win_length, 4096], dtype=np.float32)
+        left_context_feats = np.zeros([win_length, self.visual_feature_dim], dtype=np.float32)
+        right_context_feats = np.zeros([win_length, self.visual_feature_dim], dtype=np.float32)
         last_left_feat = np.load(self.sliding_clip_path + clip_name)
         last_right_feat = np.load(self.sliding_clip_path + clip_name)
 
@@ -339,11 +339,11 @@ class movieDataset():
             left_context_end = start - clip_length * k
             right_context_start = end + clip_length * k
             right_context_end = end+clip_length * (k + 1)
-            left_context_name = movie_name + "_" + str(left_context_start) + "_" + str(left_context_end) + ".npy"
-            right_context_name = movie_name + "_" + str(right_context_start) + "_" + str(right_context_end) + ".npy"
+            left_context_name = '{}_{}_{}.npy'.format(movie_name, left_context_start, left_context_end)
+            right_context_name = '{}_{}_{}.npy'.format(movie_name, right_context_start, right_context_end)
 
             if os.path.exists(self.sliding_clip_path + left_context_name):
-                left_context_feat = np.load(self.sliding_clip_path+left_context_name)
+                left_context_feat = np.load(self.sliding_clip_path + left_context_name)
                 last_left_feat = left_context_feat
             else:
                 left_context_feat = last_left_feat
@@ -357,28 +357,4 @@ class movieDataset():
             left_context_feats[k] = left_context_feat
             right_context_feats[k] = right_context_feat
 
-        return np.mean(left_context_feats, axis=0), np.mean(right_context_feats, axis=0)
-
-class queryEncoder():
-
-    def __init__(self, sent_dir):
-
-        self.query_sent_path = sent_dir
-        self.encoder = skipthoughts.Encoder(skipthoughts.load_model())
-        self.sent_feat = []
-
-        query_sent = []
-        with open(self.query_sent_path) as f:
-            for query in f:
-                if query[0] != '_': query_sent.append(query)
-
-        query_vec = self.encoder.encode(query_sent)
-
-        for i in range(len(query_vec)):
-            self.sent_feat.append([query_sent[i], query_vec[i]])
-
-        print("query number: " + str(len(self.sent_feat)))
-
-    def load_query_sentence(self):
-
-        return self.sent_feat
+        return left_context_feats, right_context_feats

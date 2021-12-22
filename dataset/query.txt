@@ -8,3 +8,4 @@ _the person sliced an avocado into many pieces.
 _the person sliced and diced a pineapple.
 _the person cooked some vegetables on the stove top.
 _the person prepared leeks with butter and seasonings.
+_the person went to the fridge.
